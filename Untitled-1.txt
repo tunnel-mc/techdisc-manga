@@ -1,0 +1,11 @@
+cd "D:\MarkosFiles\Projekte\techdisc-chopper-app\techdisc_manga_vite"
+git init
+git add .
+git commit -m "Initial commit"
+
+
+
+.\setup-techdisc.ps1
+
+
+.\setup-and-deploy.ps1

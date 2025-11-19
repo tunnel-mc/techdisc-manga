@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Permanent+Marker&family=Roboto:wght@400;700&display=swap');
+
+:root{
+  --manga-bg:#fff8f2;
+  --panel:#ffffff;
+  --ink:#111017;
+  --accent:#ff2d95;
+  --accent2:#1fb6ff;
+  --halftone:radial-gradient(circle at 20% 10%, rgba(0,0,0,0.06) 0 2px, transparent 3px), radial-gradient(circle at 80% 90%, rgba(0,0,0,0.04) 0 2px, transparent 3px);
+}
+
+*{box-sizing:border-box}
+body{margin:0;font-family:Roboto,system-ui,-apple-system,'Segoe UI',sans-serif;background:linear-gradient(180deg,var(--manga-bg) 0%,#ffeef8 100%);color:var(--ink);-webkit-font-smoothing:antialiased}
+.page{max-width:1100px;margin:28px auto;padding:18px}
+.header{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.title{font-family:'Press Start 2P',monospace;font-size:20px;margin:0}
+.subtitle{margin:0;color:rgba(0,0,0,0.6);font-size:13px}
+
+.controls{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.controls input[type=file]{padding:6px}
+.buttons{display:flex;gap:8px}
+.btn{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+.btn.alt{background:#fff;border:2px solid var(--ink);color:var(--ink)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+
+.manga-card{
+  background:var(--panel);
+  border-radius:18px;
+  padding:14px;
+  box-shadow: 0 10px 0 rgba(0,0,0,0.08), 0 0 0 4px #fff, 8px 12px 0 rgba(0,0,0,0.04) inset;
+  position:relative;
+  overflow:visible;
+  border:3px solid var(--ink);
+  background-image: var(--halftone), linear-gradient(180deg,#fff 0%,#fff7fb 100%);
+}
+
+.panel-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.manga-bubble{background:var(--accent);color:white;padding:6px 10px;border-radius:999px;font-weight:700;box-shadow:0 6px 0 rgba(0,0,0,0.14);transform:rotate(-2deg);font-family:'Permanent Marker',cursive}
+.manga-values{display:flex;gap:8px;flex-wrap:wrap}
+.manga-value{min-width:120px;background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,255,255,0.85));border-radius:10px;padding:10px;border:2px solid var(--ink);box-shadow:6px 8px 0 rgba(0,0,0,0.06);position:relative}
+.label{font-size:11px;color:rgba(0,0,0,0.6)}
+.num{font-family:'Press Start 2P',monospace;font-size:16px;margin-top:6px;color:var(--accent);text-shadow:1px 1px 0 #fff}
+.manga-ka{position:absolute;right:-12px;top:-12px;background:var(--accent2);color:white;padding:6px 10px;font-family:'Permanent Marker',cursive;transform:rotate(12deg);border-radius:8px;box-shadow:0 8px 0 rgba(0,0,0,0.12)}
+
+.speech-bubble{position:relative;background:#fff;border:3px solid var(--ink);padding:10px 12px;border-radius:12px;display:inline-block;max-width:220px;font-size:12px;margin-top:8px}
+.speech-bubble:after{content:"";position:absolute;left:14px;bottom:-14px;width:0;height:0;border:14px solid transparent;border-top-color:#fff;border-top-width:14px}
+
+.manga-sparkle{position:absolute;left:8px;top:8px;width:10px;height:10px;background:linear-gradient(45deg,#fff,#ffd9f0);transform:rotate(25deg);border-radius:2px;opacity:0.9;box-shadow:0 2px 0 rgba(0,0,0,0.08);animation:sparkle 2.2s infinite}
+@keyframes sparkle{0%{transform:scale(0.9) rotate(10deg);opacity:0.6}50%{transform:scale(1.15) rotate(25deg);opacity:1}100%{transform:scale(0.9) rotate(10deg);opacity:0.6}}
+
+.speech-wrap{margin-top:10px}
+.footer{text-align:center;margin-top:18px;color:rgba(0,0,0,0.6)}
+
+.empty{padding:24px;display:flex;justify-content:center}
+.manga-big{font-size:22px}
