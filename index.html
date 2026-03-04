@@ -2,89 +2,86 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <title>AXRO API via PHP-Proxy</title>
+  <title>AXRO API Moderne Business-Tabelle</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Roboto, Arial, sans-serif; background:#f4f7fa; color:#1a2236; }
-    main { max-width:600px; margin:40px auto; padding:28px 24px; background:#fff; border-radius:14px; box-shadow:0 3px 22px #bed3ec55; }
-    input, button { font-size:1em; padding:8px; margin:6px 0; width:100%; }
-    table { border-collapse:collapse;margin-top:32px;width:100%; }
-    th, td { border:1px solid #d1dbef; padding:8px 14px; }
-    th { background:#3167ea;color:#fff; }
-  </style>
+  <!-- Google Fonts: Roboto -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
 </head>
 <body>
-<main>
-  <h2>AXRO API (Proxy via PHP)</h2>
-  <form id="loginForm">
-    <label>
-      Benutzername:<br>
-      <input name="username" value="mcrefeld@axro.de" required>
-    </label><br>
-    <label>
-      Passwort:<br>
-      <input name="password" type="password" value="Xerxes12345!!!" required>
-    </label><br>
-    <button type="submit">Login & Daten laden</button>
-  </form>
-  <pre id="debug" style="margin:1em 0; color:#c00;"></pre>
-  <table id="api-table" style="display:none;">
-    <thead></thead>
-    <tbody></tbody>
-  </table>
-</main>
-<script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  document.getElementById('debug').textContent = 'Authentifiziere...';
-
-  const formData = new FormData(e.target);
-  // Step 1: Login über PHP-Proxy
-  let loginResp = await fetch('api-proxy.php', {
-    method: 'POST',
-    body: formData
-  });
-  let loginJson = await loginResp.json();
-
-  if (!loginResp.ok || !loginJson.token) {
-    document.getElementById('debug').textContent = 'Login fehlgeschlagen: ' + (loginJson.error || JSON.stringify(loginJson));
-    return;
-  }
-  document.getElementById('debug').textContent = 'Erfolgreich eingeloggt, lade Daten...';
-
-  // Step 2: Nutzer-Daten laden (geht wieder über Proxy ODER direkt – z.B. über zweites PHP-Proxy, wenn CORS ein Problem wäre)
-  // --- Beispiel: via neuem Endpoint (api-users-proxy.php), hier Beispiel für fetch direkt:
-  let usersResp = await fetch('https://api.axro.com/api/v1/users', {
-    headers: { 'Authorization': 'Bearer ' + loginJson.token }
-  });
-  let users = [];
-  try { users = await usersResp.json(); } catch {}
-  if (!Array.isArray(users)) {
-    document.getElementById('debug').textContent = 'Fehler beim Abrufen der User-Daten';
-    return;
-  }
-
-  // Tabelle dynamisch bauen
-  document.getElementById('debug').textContent = '';
-  document.getElementById('api-table').style.display = '';
-  const thead = document.querySelector('#api-table thead');
-  const tbody = document.querySelector('#api-table tbody');
-  thead.innerHTML = '';
-  tbody.innerHTML = '';
-  if (!users.length) {
-    tbody.innerHTML = '<tr><td colspan="5">keine Daten</td></tr>';
-    return;
-  }
-  // Spalten aus Keys des ersten Objekts
-  let columns = Object.keys(users[0]);
-  thead.innerHTML = '<tr>' + columns.map(key => `<th>${key}</th>`).join('') + '</tr>';
-  users.forEach(row => {
-    tbody.innerHTML += '<tr>' + columns.map(key =>
-      `<td>${(typeof row[key] === 'object' && row[key] !== null) ? JSON.stringify(row[key]) : (row[key] ?? '')}</td>`
-    ).join('') + '</tr>';
-  });
-});
-</script>
+  <header>AXRO Business Data Table</header>
+  <main>
+    <h2>Dynamische API-Tabelle</h2>
+    <div id="state-message" class="loading">Lade Daten ...</div>
+    <table id="api-table" style="display:none;">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </main>
+  <script>
+    const username = "mcrefeld@axro.de";
+    const password = "Xerxes12345!!!";
+    async function loginAndFetchData() {
+      const msgDiv = document.getElementById('state-message');
+      msgDiv.textContent = 'Lade Daten ...';
+      const table = document.getElementById('api-table');
+      table.style.display = 'none';
+      try {
+        const loginResponse = await fetch('https://api.axro.com/api/v1/login/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+        });
+        if (!loginResponse.ok) throw new Error('Login fehlgeschlagen.');
+        const loginData = await loginResponse.json();
+        const token = loginData.token || loginData.access_token;
+        if (!token) throw new Error('Token nicht erhalten!');
+        const dataResponse = await fetch('https://api.axro.com/api/v1/users', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!dataResponse.ok) throw new Error('Datenabfrage fehlgeschlagen.');
+        const data = await dataResponse.json();
+        buildDynamicTable(data);
+        msgDiv.style.display = 'none';
+        table.style.display = '';
+      } catch (err) {
+        document.querySelector('#api-table thead').innerHTML = "";
+        document.querySelector('#api-table tbody').innerHTML = "";
+        msgDiv.className = 'error';
+        msgDiv.style.display = '';
+        msgDiv.textContent = 'Fehler: ' + err.message;
+      }
+    }
+    function buildDynamicTable(data) {
+      const table = document.getElementById('api-table');
+      const thead = table.querySelector('thead');
+      const tbody = table.querySelector('tbody');
+      thead.innerHTML = "";
+      tbody.innerHTML = "";
+      if (!Array.isArray(data) || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="99">Keine Daten zurückgegeben.</td></tr>';
+        return;
+      }
+      const columns = Object.keys(data[0]);
+      const headRow = document.createElement("tr");
+      columns.forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headRow.appendChild(th);
+      });
+      thead.appendChild(headRow);
+      data.forEach(rowObj => {
+        const tr = document.createElement("tr");
+        columns.forEach(key => {
+          const td = document.createElement('td');
+          let value = rowObj[key];
+          td.textContent = typeof value === "object" && value !== null ? JSON.stringify(value) : (value ?? '');
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+    loginAndFetchData();
+  </script>
 </body>
 </html>
