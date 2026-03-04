@@ -1,0 +1,98 @@
+:root {
+  --primary: #3167ea;
+  --secondary: #eef3fa;
+  --bg: #f9fafd;
+  --text: #1a2236;
+  --accent: #23e6bc;
+  --border: #e3e6eb;
+}
+body {
+  background: var(--secondary);
+  font-family: 'roboto', 'Segoe UI', 'Arial', sans-serif;
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  letter-spacing: 0.01em;
+}
+header {
+  background: linear-gradient(90deg, var(--primary), #25479a 75%);
+  color: #fff;
+  padding: 38px 0 18px 0;
+  text-align: center;
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+  box-shadow: 0 3px 15px rgba(49,103,234,0.09);
+  text-shadow: 0 1px 8px #01153b33;
+  position: relative;
+}
+main {
+  max-width: 1200px;
+  margin: 48px auto;
+  background: var(--bg);
+  border-radius: 22px;
+  box-shadow: 0 2px 34px #acd9fd33;
+  padding: 40px 24px 60px;
+  min-height: 400px;
+}
+h2 {
+  margin-top: 0;
+  text-align: center;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin: 32px 0 18px 0;
+  background: #fff;
+  box-shadow: 0 4px 18px #6a93df0d;
+  border-radius: 12px;
+  overflow: hidden;
+}
+thead tr {
+  background: var(--primary);
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1.08em;
+  letter-spacing: 1.1px;
+}
+th, td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  transition: background 0.18s;
+}
+th:last-child, td:last-child { border-right: none; }
+th:first-child, td:first-child { border-left: none; }
+th {
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--primary) 70%, #25479a);
+  border-bottom: 2.5px solid #1b2552;
+}
+tbody tr {
+  transition: background 0.18s;
+}
+tbody tr:hover {
+  background: #f6faff;
+}
+td {
+  vertical-align: middle;
+}
+.loading, .error {
+  text-align: center;
+  font-size: 1.23rem;
+  color: var(--primary);
+  margin: 48px 0;
+  font-weight: 500;
+}
+::-webkit-scrollbar { width: 10px; background: #d5e4f7; }
+::-webkit-scrollbar-thumb { background: #bed3ec; border-radius: 8px; }
+@media (max-width: 700px) {
+  main { padding: 10px 0.5vw; }
+  th, td { padding: 8px; font-size: 0.97em; }
+  header { font-size: 1.19rem; padding: 22px 0 10px 0; }
+}
