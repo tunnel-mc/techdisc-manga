@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>AXRO API Moderne Business-Tabelle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <header>AXRO Business Data Table</header>
+  <main>
+    <h2>Dynamische API-Tabelle</h2>
+    <div id="state-message" class="loading">Lade Daten ...</div>
+    <table id="api-table" style="display:none;">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </main>
+  <script>
+    const username = "mcrefeld@axro.de";
+    const password = "Xerxes12345!!!";
+    async function loginAndFetchData() {
+      const msgDiv = document.getElementById('state-message');
+      msgDiv.textContent = 'Lade Daten ...';
+      const table = document.getElementById('api-table');
+      table.style.display = 'none';
+      try {
+        const loginResponse = await fetch('https://api.axro.com/api/v1/login/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+        });
+        if (!loginResponse.ok) throw new Error('Login fehlgeschlagen.');
+        const loginData = await loginResponse.json();
+        const token = loginData.token || loginData.access_token;
+        if (!token) throw new Error('Token nicht erhalten!');
+        const dataResponse = await fetch('https://api.axro.com/api/v1/users', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!dataResponse.ok) throw new Error('Datenabfrage fehlgeschlagen.');
+        const data = await dataResponse.json();
+        buildDynamicTable(data);
+        msgDiv.style.display = 'none';
+        table.style.display = '';
+      } catch (err) {
+        document.querySelector('#api-table thead').innerHTML = "";
+        document.querySelector('#api-table tbody').innerHTML = "";
+        msgDiv.className = 'error';
+        msgDiv.style.display = '';
+        msgDiv.textContent = 'Fehler: ' + err.message;
+      }
+    }
+    function buildDynamicTable(data) {
+      const table = document.getElementById('api-table');
+      const thead = table.querySelector('thead');
+      const tbody = table.querySelector('tbody');
+      thead.innerHTML = "";
+      tbody.innerHTML = "";
+      if (!Array.isArray(data) || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="99">Keine Daten zurückgegeben.</td></tr>';
+        return;
+      }
+      const columns = Object.keys(data[0]);
+      const headRow = document.createElement("tr");
+      columns.forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headRow.appendChild(th);
+      });
+      thead.appendChild(headRow);
+      data.forEach(rowObj => {
+        const tr = document.createElement("tr");
+        columns.forEach(key => {
+          const td = document.createElement('td');
+          let value = rowObj[key];
+          td.textContent = typeof value === "object" && value !== null ? JSON.stringify(value) : (value ?? '');
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+    loginAndFetchData();
+  </script>
+</body>
+</html>
