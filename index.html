@@ -9,80 +9,12 @@
   <link href="style.css" rel="stylesheet">
 </head>
 <body>
-  <header>AXRO Business Data Table II</header>
+  <header>Die dumme Seite</header>
   <main>
-    <h2>Dynamische API-Tabelle</h2>
-    <div id="state-message" class="loading">Lade Daten ...</div>
-    <table id="api-table" style="display:none;">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  
-  <script>
-    const username = "mcrefeld@axro.de";
-    const password = "";
-    async function loginAndFetchData() {
-      const msgDiv = document.getElementById('state-message');
-      msgDiv.textContent = 'Lade Daten ...';
-      const table = document.getElementById('api-table');
-      table.style.display = 'none';
-      try {
-        const loginResponse = await fetch('https://api.axro.com/api/v1/login/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-        });
-        if (!loginResponse.ok) throw new Error('Login fehlgeschlagen.');
-        const loginData = await loginResponse.json();
-        const token = loginData.token || loginData.access_token;
-        if (!token) throw new Error('Token nicht erhalten!');
-        const dataResponse = await fetch('https://api.axro.com/api/v1/users', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        });
-        if (!dataResponse.ok) throw new Error('Datenabfrage fehlgeschlagen.');
-        const data = await dataResponse.json();
-        buildDynamicTable(data);
-        msgDiv.style.display = 'none';
-        table.style.display = '';
-      } catch (err) {
-        document.querySelector('#api-table thead').innerHTML = "";
-        document.querySelector('#api-table tbody').innerHTML = "";
-        msgDiv.className = 'error';
-        msgDiv.style.display = '';
-        msgDiv.textContent = 'Fehler: ' + err.message;
-      }
-    }
-    function buildDynamicTable(data) {
-      const table = document.getElementById('api-table');
-      const thead = table.querySelector('thead');
-      const tbody = table.querySelector('tbody');
-      thead.innerHTML = "";
-      tbody.innerHTML = "";
-      if (!Array.isArray(data) || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="99">Keine Daten zurückgegeben.</td></tr>';
-        return;
-      }
-      const columns = Object.keys(data[0]);
-      const headRow = document.createElement("tr");
-      columns.forEach(key => {
-        const th = document.createElement('th');
-        th.textContent = key;
-        headRow.appendChild(th);
-      });
-      thead.appendChild(headRow);
-      data.forEach(rowObj => {
-        const tr = document.createElement("tr");
-        columns.forEach(key => {
-          const td = document.createElement('td');
-          let value = rowObj[key];
-          td.textContent = typeof value === "object" && value !== null ? JSON.stringify(value) : (value ?? '');
-          tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-      });
-    }
-    loginAndFetchData();
-  </script>
+    <h2>Ein völlig ernsthafter Text</h2>
+    <p>Es war einmal ein wild gewordener Kühlschrank, der davon träumte, ein Surfbrett zu werden. Jeden Morgen erzählte er dem Toastbrot von seinen Plänen, über alle Wolkenkratzer der Stadt zu sausen und auf einer Welle aus Ketchup ins Ziel zu gleiten.</p>
+    <p>Der Gartenzwerg organisierte eine Konferenz für tanzende Gummienten, während die Uhr an der Wand verzweifelt versuchte, ihr eigenes Leben zu verstehen. Niemand konnte sagen, ob die Sonne wirklich gelb war oder nur eine besonders aufgeblasene Zitronenscheibe.</p>
+    <p>Am Ende des Tages applaudierten die Autos dem Mond, und ein einsamer Streichholzschachtelchor stimmte ein Lied über verlorene Socken an. Die dumme Seite blieb dabei völlig ernst und stolz auf ihr Wunderland aus zufälligen Gedanken.</p>
   </main>
 </body>
 </html>
